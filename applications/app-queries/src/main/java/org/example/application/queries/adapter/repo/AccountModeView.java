@@ -1,6 +1,7 @@
 package org.example.application.queries.adapter.repo;
 
 import org.example.domain.events.TransactionAdded;
+import org.example.domain.value.WalletId;
 
 import java.util.*;
 
@@ -9,6 +10,19 @@ public class AccountModeView {
     private String name;
     private String userId;
     private Map<String, TransactionModelView> transactionModelViews;
+    private WalletModelView walletModelView;
+
+    public WalletModelView getWalletModelView() {
+        return walletModelView;
+    }
+
+    public void setWalletModelViewById(String walletId) {
+        this.walletModelView = new WalletModelView(walletId);
+    }
+
+    public void setWalletModelView(WalletModelView walletModelView) {
+        this.walletModelView = walletModelView;
+    }
 
     public void setTransactionModelViews(Map<String, TransactionModelView> transactionModelViews) {
         this.transactionModelViews = transactionModelViews;
@@ -20,7 +34,6 @@ public class AccountModeView {
         }
         return transactionModelViews;
     }
-
     public String getId() {
         return id;
     }

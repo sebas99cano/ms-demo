@@ -2,9 +2,11 @@ package org.example.application.command.handle;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.example.business.AddCoinInWalletUseCase;
 import org.example.business.AddTransactionUseCase;
 import org.example.business.CreateAccountUseCase;
 import org.example.domain.command.AddTransactionUseCommand;
+import org.example.domain.command.CoinInWalletUseCommand;
 import org.example.domain.command.CreateAccountCommand;
 import org.example.domain.events.TransactionAdded;
 import org.example.domain.value.AccountId;
@@ -28,6 +30,7 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 public class CommandHandle {
     private final IntegrationHandle integrationHandle;
     private final ErrorHandler errorHandler;
+
     public CommandHandle(IntegrationHandle integrationHandle, ErrorHandler errorHandler) {
         this.integrationHandle = integrationHandle;
         this.errorHandler = errorHandler;
@@ -35,30 +38,36 @@ public class CommandHandle {
 
     @Bean
     public RouterFunction<ServerResponse> crear(CreateAccountUseCase usecase) {
-
         return route(
                 POST("/account/create").and(accept(MediaType.APPLICATION_JSON)),
-
                 request -> usecase.andThen(integrationHandle)
                         .apply(request.bodyToMono(CreateAccountCommand.class))
                         .then(ServerResponse.ok().build())
                         .onErrorResume(errorHandler::badRequest)
-
         );
     }
 
-
     @Bean
     public RouterFunction<ServerResponse> addtransaction(AddTransactionUseCase usecase) {
-
         return route(
                 POST("/account/addtransaction").and(accept(MediaType.APPLICATION_JSON)),
-
                 request -> usecase.andThen(integrationHandle)
                         .apply(request.bodyToMono(AddTransactionUseCommand.class))
                         .then(ServerResponse.ok().build())
                         .onErrorResume(errorHandler::badRequest)
+        );
+    }
 
+    @Bean
+    public RouterFunction<ServerResponse> addCoinInWallet(AddCoinInWalletUseCase useCase) {
+        return route(
+                POST("/account/addcoininwallet").and(accept(MediaType.APPLICATION_JSON)),
+                request -> {
+                    return useCase.andThen(integrationHandle)
+                            .apply(request.bodyToMono(CoinInWalletUseCommand.class))
+                            .then(ServerResponse.ok().build())
+                            .onErrorResume(errorHandler::badRequest);
+                }
         );
     }
 }
